@@ -17,7 +17,7 @@ function showTipModal(platform, username) {
 
   // Create the iframe
   const iframe = document.createElement("iframe");
-  iframe.src = `https://tipper-gamma.vercel.app/#/tip/${platform}/${username}`; // URL of your actual Tip app
+  iframe.src = `https://12fc-124-122-192-206.ngrok-free.app/#/tip/${platform}/${username}`; // URL of your actual Tip app
   iframe.style = `
       width: 450px; 
       height: 750px; 
