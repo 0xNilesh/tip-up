@@ -4,13 +4,13 @@
     "version": "1.0",
     "description": "Adds a Tip button on GitHub profiles.",
     "permissions": ["activeTab", "storage", "scripting"],
-    "host_permissions": ["https://github.com/*", "https://x.com/*"],
+    "host_permissions": ["https://github.com/*", "https://x.com/*", "http://localhost:5173/*"],
     "background": {
       "service_worker": "background.js"
     },
     "content_scripts": [
       {
-        "matches": ["https://*.github.com/*", "https://*.x.com/*"],
+        "matches": ["https://*.github.com/*", "https://*.x.com/*", "http://localhost:5173/*"],
       "js": ["script.js", "platform.js", "common.js"],
       "css": ["styles.css"]
       }

@@ -1,6 +1,6 @@
 // export const API_URL:string =  'https://tipper-386g.onrender.com/wallet';
-// export const API_URL: string = 'http://localhost:3000/wallet'
-export const API_URL: string = 'https://b700-124-122-192-206.ngrok-free.app/wallet';
+export const API_URL: string = 'http://localhost:3000/wallet'
+// export const API_URL: string = 'https://b700-124-122-192-206.ngrok-free.app/wallet';
 
 export const NATIVE_TOKEN_ADDRESS: string =
   '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
