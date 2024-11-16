@@ -1,27 +1,44 @@
 import { Twitter, Github } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { getAttestations } from '@/services/signX'
+import { AttestationInfo } from '@ethsign/sp-sdk'
 
 const dummyTips = [
   {
-    sender: '0x1234...abcd',
-    receiver: '@dev1',
+    sender: '0x087F5052fBcD7C02DD45fb9907C57F1EccC2bE25',
+    receiver: 'aman035',
     receiverPlatform: 'github', // or 'twitter'
-    txHash: '0x9876...wxyz',
+    txHash:
+      '0x3c73e9b957bbaec798bf1915db3efc66968fe22464984e495ee814284aa125eb',
   },
   {
-    sender: '0xabcd...1234',
-    receiver: '@user2',
+    sender: '0x087F5052fBcD7C02DD45fb9907C57F1EccC2bE25',
+    receiver: '0xnilesh',
     receiverPlatform: 'twitter',
-    txHash: '0x5678...qrst',
+    txHash:
+      '0x74678c6767688295f187b34dc8630388ee4c0c705eb61ff7888ff04c89489bf7',
   },
   {
-    sender: '0xffff...ffff',
-    receiver: '@cooldev',
+    sender: '0x087F5052fBcD7C02DD45fb9907C57F1EccC2bE25',
+    receiver: 'aman035',
     receiverPlatform: 'github',
-    txHash: '0xa1b2...c3d4',
+    txHash:
+      '0x875ca5a7458fc2ad98896d047e1e6c0dfa9853432afbe0282d21266108064d1c',
   },
 ]
 
 const TipExplorer = () => {
+  const [attestations, setAttestations] = useState<AttestationInfo[]>([])
+
+  useEffect(() => {
+    const fetchAttestations = async () => {
+      const att = await getAttestations('tDWgWZUWDkZyK', 1)
+      if (att) setAttestations(att.rows)
+    }
+
+    fetchAttestations()
+  }, [])
+
   return (
     <div className="min-h-screen p-8">
       <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
@@ -55,7 +72,7 @@ const TipExplorer = () => {
                 </td>
                 <td className="py-4 px-6 text-gray-700 dark:text-gray-300">
                   <a
-                    href={`https://etherscan.io/tx/${tip.txHash}`}
+                    href={`https://arbitrum.blockscout.com/tx/${tip.txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
