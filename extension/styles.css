@@ -1,0 +1,32 @@
+.tip-button {
+    margin-left: 10px;
+    background: inherit;
+    color: mediumpurple;
+    padding: 4px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid mediumpurple;
+    transition: transform 0.3s; /* Added background color transition */
+    vertical-align: middle;
+    height: fit-content;
+    font-family: system-ui;
+}
+
+.tip-button:hover {
+    /* transform: scale(1.1); Slightly scale the button */
+    background-color: mediumpurple;
+    color: white;
+}
+
+.small-tip-button {
+    border: none;
+    position: relative;
+    font-size: 20px;
+    padding: 0px 8px;
+}
+
+.small-tip-button:hover {
+    background-color: inherit;
+    border-radius: 100px;
+    background-color: rgba(29, 155, 240, 0.1);
+}
