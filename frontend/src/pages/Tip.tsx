@@ -6,6 +6,7 @@ import { Twitter, Github } from "lucide-react";
 import { useWeb3Auth } from "@web3auth/modal-react-hooks";
 import { createWallet } from "@/services/api/createWallet";
 import {
+  validateEnsUsername,
   validateGitHubUsername,
   validateTwitterUsername,
 } from "@/services/platformValidation";
@@ -70,7 +71,7 @@ function Tip() {
   const [recipientPreference, setRecipientPreference] =
     useState<PreferenceResponse>({ chainId: "", address: "" });
 
-  const supportedApps = ["x", "github"];
+  const supportedApps = ["x", "github", "ens"];
 
   // Function to generate random bytes32 value
 function getRandomBytes32(): string {
@@ -91,7 +92,7 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
   useEffect(() => {
     const fetchPreference = async () => {
       if (receiverAddress && app) {
-        const identifierType = app.toLowerCase() === "x" ? "twitter" : "github";
+        const identifierType = app.toLowerCase() === "x" ? "twitter" : app.toLowerCase() == "github" ? "github" : "ens";
         const preference: PreferenceResponse | null = await getPreference(
           identifierType,
           username
@@ -141,6 +142,8 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
       valid = await validateTwitterUsername(username);
     } else if (normalizedApp === "github") {
       valid = await validateGitHubUsername(username);
+    } else if (normalizedApp == "ens") {
+      valid = await validateEnsUsername(username);
     }
 
     setIsValidUser(valid);
@@ -148,7 +151,7 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
 
     if (valid) {
       setIsFetchingAddress(true);
-      const identifierType = normalizedApp === "x" ? "TWITTER" : "GITHUB";
+      const identifierType = normalizedApp === "x" ? "twitter" : normalizedApp == "github" ? "github" : "ens";
       const walletResponse = await createWallet(identifierType, username);
 
       setReceiverAddress(walletResponse?.address || "");
@@ -673,7 +676,7 @@ sdk
           </p>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
             We're constantly adding support for more platforms, so stay tuned
-            for updates! Please select a supported app such as X or GitHub.
+            for updates! Please select a supported app such as X or GitHub or ENS.
           </p>
           <a
             href="/"

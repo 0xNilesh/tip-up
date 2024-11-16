@@ -12,7 +12,7 @@ const preferenceUrl = `${API_URL}/preference`
 
 // Function to get preference
 export const getPreference = async (
-  platform: 'github' | 'twitter',
+  platform: 'github' | 'twitter' | 'ens',
   identifier: string
 ): Promise<PreferenceResponse | null> => {
   try {

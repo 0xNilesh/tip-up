@@ -17,7 +17,11 @@ export const validateTwitterUsername = async (username?: string) => {
 export const validateGitHubUsername = async (
   username?: string
 ): Promise<boolean> => {
-  return true
-  const response = await fetch(`https://api.github.com/users/${username}`)
-  return response.ok
+  return true;
+  const response = await fetch(`https://api.github.com/users/${username}`);
+  return response.ok;
+};
+
+export const validateEnsUsername = async (ens?: string): Promise<boolean> => {
+  return true;
 }
