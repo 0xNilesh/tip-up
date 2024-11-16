@@ -39,6 +39,7 @@ import {
 } from "@cowprotocol/cow-sdk";
 import * as ethers from "ethers";
 import { SDK, HashLock } from "@1inch/cross-chain-sdk";
+import { createOffChainClient, createAttestation } from "@/services/signX";
 
 function Tip() {
   const { app: urlApp, username: urlUsername } = useParams<{
@@ -246,13 +247,14 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
           amount: tipAmount,
         });
       } else {
-        await viemActions.sendErc20Token({
+        const txHash = await viemActions.sendErc20Token({
           provider: provider,
           receiver: receiverAddress,
           amount: tipAmount,
           tokenAddress: selectedToken.address,
           decimals: selectedToken.decimals,
         });
+        return txHash
       }
     } catch (error) {
       console.error("Error in transaction:", error);
@@ -346,6 +348,8 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
             hash,
           });
           console.log("Transaction confirmed:", receipt);
+
+          
         } else {
           console.log(
             "Sufficient allowance already granted, no need for approval."
@@ -384,6 +388,8 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
           });
 
           console.log(orderId);
+
+          return orderId
         } catch (e) {
           return e;
         }
@@ -393,7 +399,7 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
         console.error("Error in transaction:", error);
       }
     } else {
-      transferTipWhenNoPreference();
+      return await transferTipWhenNoPreference();
     }
   };
 
@@ -455,7 +461,7 @@ secretsCount === 1
       })[]
     );
 
-sdk
+const order = await sdk
 .placeOrder(quote, {
   walletAddress: address[0],
   hashLock,
@@ -466,6 +472,8 @@ sdk
     takingFeeReceiver: "0x0000000000000000000000000000000000000000" //  fee receiver address
   }
 })
+
+return order.orderHash
   }
 
   const handleSendTip = async () => {
@@ -478,6 +486,8 @@ sdk
 
     console.log(walletClient);
 
+    let txHash = "";
+
     const connectedChainId = await viemActions.getChainId(provider);
     const chainIdDecimal = parseInt(chain.chainId, 16);
     console.log(recipientPreference);
@@ -487,7 +497,7 @@ sdk
         selectedToken.address.toLowerCase() ===
           recipientPreference.address.toLowerCase())
     ) {
-      await transferTipCrossChain();
+      txHash = await transferTipCrossChain();
       console.log("Direct transfer to recipient");
       // await transferTipWhenNoPreference();
     } else if (
@@ -502,15 +512,31 @@ sdk
 
       if (!chainIds.includes(Number(connectedChainId))) {
         console.log("Connected chain ID is not supported.");
-        await transferTipWhenNoPreference();
+        txHash = await transferTipWhenNoPreference();
       } else {
         console.log("Connected chain ID is supported.");
-        await transferTipOnSameChain();
+        txHash = await transferTipOnSameChain();
       }
     } else {
       console.log("Use 1inch Fusion for cross-chain transfer");
-      transferTipCrossChain();
+      txHash = transferTipCrossChain();
     }
+
+
+    const client = createOffChainClient(walletClient)
+
+      await createAttestation(
+        'SPS_WST8cyX-tDWgWZUWDkZyK',
+        client,
+        {
+          TxUrl: txHash,
+          Sender: walletClient.getAddresses()[0],
+          Recipient: receiverAddress,
+          Amount: tipAmount,
+        },
+        null,
+        walletClient.getAddresses()[0]
+      )
   };
 
   const isSupported = supportedApps.includes(app || "");
