@@ -17,12 +17,12 @@ function App() {
         appId="cm3k4hfl602jjwd7shiocem7i"
         config={{
           // Display email and wallet as login methods
-          loginMethods: ['email', 'wallet'],
+          loginMethods: ['email', 'wallet', 'github', 'google'],
           // Customize Privy's appearance in your app
           appearance: {
             theme: 'light',
             accentColor: '#676FFF',
-            logo: 'https://your-logo-url',
+            logo: 'https://docs.privy.io/privy-logo-light.png',
           },
           // Create embedded wallets for users who don't have a wallet
           embeddedWallets: {

@@ -7,7 +7,7 @@ export const tokenConfig: {
     };
   };
 } = {
-  ethereum: {
+  1: {
     ETH: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "ETH",
@@ -24,10 +24,10 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  polygon: {
-    MATIC: {
+  137: {
+    POL: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-      ticker: "MATIC",
+      ticker: "POL",
       decimals: 18,
     },
     USDC: {
@@ -41,7 +41,7 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  base: {
+  8453: {
     ETH: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "ETH",
@@ -63,7 +63,7 @@ export const tokenConfig: {
       address: "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb",
     },
   },
-  arbitrum: {
+  42161: {
     AETH: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "AETH",
@@ -80,7 +80,7 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  celo: {
+  42220: {
     CELO: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "CELO",
@@ -97,7 +97,7 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  flare: {
+  14: {
     FLR: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "FLR",
@@ -114,7 +114,7 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  scroll: {
+  534352: {
     ETH: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "ETH",
@@ -131,7 +131,7 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  bitkub: {
+  96: {
     KUB: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "KUB",
@@ -148,7 +148,7 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  kinto: {
+  7887: {
     ETH: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "ETH",
@@ -165,7 +165,7 @@ export const tokenConfig: {
       decimals: 18,
     },
   },
-  gnosis: {
+  100: {
     XDAI: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "xDAI",
@@ -197,7 +197,7 @@ export const tokenConfig: {
   //       decimals: 6,
   //     },
   //   },
-  neon: {
+  245022934: {
     NEON: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "NEON",
@@ -214,14 +214,14 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  rootstock: {
+  30: {
     RBTC: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "RBTC",
       decimals: 18,
     },
   },
-  oasis: {
+  42262: {
     ROSE: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "ROSE",
@@ -238,7 +238,7 @@ export const tokenConfig: {
       decimals: 18,
     },
   },
-  mantle: {
+  5000: {
     MNT: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "MNT",
@@ -255,7 +255,7 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
-  linea: {
+  59144: {
     ETH: {
       address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       ticker: "ETH",
@@ -272,4 +272,95 @@ export const tokenConfig: {
       decimals: 6,
     },
   },
+  11155111: {
+    ETH: {
+      address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      ticker: "ETH",
+      decimals: 18,
+    },
+  },
+  59141 : {
+    ETH: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "ETH",
+    decimals: 18,
+  },
+},
+5003: {
+  MNT: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "MNT",
+    decimals: 18,
+  },
+},
+4090: {
+  FTN: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "FTN",
+    decimals: 18,
+  },
+},
+245022926: {
+  NEON: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "NEON",
+    decimals: 18,
+  },
+},
+10200: {
+  XDAI: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "XDAI",
+    decimals: 18,
+  },
+},
+114: {
+  C2FLR: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "C2FLR",
+    decimals: 18,
+  },
+},
+44787: {
+  CELO: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "CELO",
+    decimals: 18,
+  },
+},
+421614: {
+  ETH: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "ETH",
+    decimals: 18,
+  },
+},
+84532: {
+  ETH: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "ETH",
+    decimals: 18,
+  },
+},
+25925: {
+  KUB: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "KUB",
+    decimals: 18,
+  },
+},
+534351: {
+  ETH: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "ETH",
+    decimals: 18,
+  },
+},
+80002: {
+  POL: {
+    address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    ticker: "POL",
+    decimals: 18,
+  },
+},
 };

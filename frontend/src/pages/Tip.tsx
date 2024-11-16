@@ -40,6 +40,53 @@ import {
 import * as ethers from "ethers";
 import { SDK, HashLock } from "@1inch/cross-chain-sdk";
 import { createOffChainClient, createAttestation } from "@/services/signX";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+import {
+  bitkub,
+  polygonAmoy,
+  scrollSepolia,
+  bitkubTestnet,
+  baseSepolia,
+  arbitrumSepolia,
+  gnosis,
+  celoAlfajores,
+  flareTestnet,
+  kinto,
+  gnosisChiado,
+  neonDevnet,
+  rootstockTestnet,
+  oasisTestnet,
+  mantleSepoliaTestnet,
+  lineaSepolia,
+  arbitrum,
+  polygon,
+  mainnet,
+  sepolia,
+  neonMainnet,
+} from "viem/chains";
+
+const chainsList = [
+  bitkub,
+  polygonAmoy,
+  scrollSepolia,
+  bitkubTestnet,
+  baseSepolia,
+  arbitrumSepolia,
+  gnosis,
+  celoAlfajores,
+  flareTestnet,
+  kinto,
+  gnosisChiado,
+  neonDevnet,
+  rootstockTestnet,
+  oasisTestnet,
+  mantleSepoliaTestnet,
+  lineaSepolia,
+  arbitrum,
+  polygon,
+  mainnet,
+  sepolia,
+];
 
 function Tip() {
   const { app: urlApp, username: urlUsername } = useParams<{
@@ -50,7 +97,7 @@ function Tip() {
   const [username, setUsername] = useState<string>("");
   const [isValidUser, setIsValidUser] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [chain, setChain] = useState<CustomChainConfig>(chainConfig.arbitrum);
+  const [chain, setChain] = useState<any>(arbitrum);
   const [selectedToken, setSelectedToken] = useState<{
     ticker: string;
     value: string;
@@ -66,26 +113,37 @@ function Tip() {
   const [receiverAddress, setReceiverAddress] = useState<string>("");
   const [isFetchingAddress, setIsFetchingAddress] = useState<boolean>(false);
   const [isCorrectChain, setIsCorrectChain] = useState<boolean>(true);
+
+  // console.log(isCorrectChain, ": isCorrectChain");
+
   const [chainTokens, setChainTokens] = useState<
     { ticker: string; value: string; address: string; decimals: number }[]
   >([]);
   const [recipientPreference, setRecipientPreference] =
     useState<PreferenceResponse>({ chainId: "", address: "" });
+  const { authenticated, ready, user, login } = usePrivy();
+  const { wallets } = useWallets();
+  // const wallet = wallets[0]; // Replace this with your desired wallet
+  // const chainId = wallet?.chainId;
+
+  // console.log(user);
+  // console.log(wallets);
+  // console.log(wallet, chainId);
 
   const supportedApps = ["x", "github", "ens"];
 
   // Function to generate random bytes32 value
-function getRandomBytes32(): string {
-  const randomBytes = ethers.utils.randomBytes(32); // Generates 32 random bytes
-  return ethers.utils.hexlify(randomBytes); // Convert bytes to a hex string (bytes32)
-}
+  function getRandomBytes32(): string {
+    const randomBytes = ethers.utils.randomBytes(32); // Generates 32 random bytes
+    return ethers.utils.hexlify(randomBytes); // Convert bytes to a hex string (bytes32)
+  }
 
-// Function to compute Solidity-packed Keccak256 hash
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function solidityPackedKeccak256(types: string[], values: any[]): string {
-  const packedData = ethers.utils.solidityPack(types, values); // ABI encode the values
-  return ethers.utils.keccak256(packedData); // Compute the Keccak256 hash of the packed data
-}
+  // Function to compute Solidity-packed Keccak256 hash
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function solidityPackedKeccak256(types: string[], values: any[]): string {
+    const packedData = ethers.utils.solidityPack(types, values); // ABI encode the values
+    return ethers.utils.keccak256(packedData); // Compute the Keccak256 hash of the packed data
+  }
 
   const { provider, isConnected, connect, addChain, switchChain } =
     useWeb3Auth();
@@ -93,7 +151,12 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
   useEffect(() => {
     const fetchPreference = async () => {
       if (receiverAddress && app) {
-        const identifierType = app.toLowerCase() === "x" ? "twitter" : app.toLowerCase() == "github" ? "github" : "ens";
+        const identifierType =
+          app.toLowerCase() === "x"
+            ? "twitter"
+            : app.toLowerCase() == "github"
+            ? "github"
+            : "ens";
         const preference: PreferenceResponse | null = await getPreference(
           identifierType,
           username
@@ -112,9 +175,12 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
 
   // Update the token list and native token whenever the selected chain changes
   useEffect(() => {
-    const selectedChainKey = Object.keys(chainConfig).find(
-      (key) => chainConfig[key] === chain
-    );
+    if (!chain?.id) return;
+    const chainId = chain.id;
+    const selectedChainKey = chainsList.find(
+      (c) => c.id == chainId
+    )?.id;
+
     if (selectedChainKey) {
       const nativeToken = chainConfig[selectedChainKey]?.ticker || "ETH"; // Use a default token like "ETH"
       setSelectedToken({
@@ -152,7 +218,12 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
 
     if (valid) {
       setIsFetchingAddress(true);
-      const identifierType = normalizedApp === "x" ? "twitter" : normalizedApp == "github" ? "github" : "ens";
+      const identifierType =
+        normalizedApp === "x"
+          ? "twitter"
+          : normalizedApp == "github"
+          ? "github"
+          : "ens";
       const walletResponse = await createWallet(identifierType, username);
 
       setReceiverAddress(walletResponse?.address || "");
@@ -171,16 +242,17 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
   }, [app, username]);
 
   useEffect(() => {
-    if (!provider) return;
+    if (!authenticated) return;
 
     const checkChain = async () => {
-      const connectedChainId = await viemActions.getChainId(provider);
+      const wallet = wallets[0]; // Replace this with your desired wallet
+      const chainId = wallet?.chainId;
       const chainIdDecimal = parseInt(chain.chainId, 16);
-      setIsCorrectChain(connectedChainId == chainIdDecimal);
+      setIsCorrectChain(chainId == chainIdDecimal);
     };
 
     checkChain();
-  }, [provider, chain]);
+  }, [authenticated, chain]);
 
   const handleAppChange = (e: ChangeEvent<HTMLSelectElement>) =>
     setApp(e.target.value.toLowerCase());
@@ -197,7 +269,7 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
 
   const handleTokenChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const selected = chainTokens.find(
-      (token) => token.ticker === e.target.value
+      (token) => token.ticker.toLowerCase() == e.target.value.toLowerCase()
     );
     console.log(selected);
     if (selected) {
@@ -205,15 +277,34 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
     }
   };
 
-  const switchChainNetwork = async () => {
-    if (!provider) return;
+  const switchChainNetwork = async (id: number) => {
+    if (!authenticated) return;
 
-    const chainId = parseInt(chain.chainId, 16); // Convert chainId to decimal
+    const wallet = wallets[0]; // Replace this with your desired wallet
+    const currentChainId = wallet.chainId;
+
+    const ethProvider = await wallet.getEthereumProvider();
+    const walletClient = createWalletClient({
+      chain: viemActions.getViewChain(wallet.chainId.split(":")[1]),
+      transport: custom(ethProvider),
+    });
+
+    const targetChainId = id; // Convert chainId to decimal
+
+    // Find the target chain from chainsList
+    console.log(chainsList);
+    const targetChain = chainsList.find((chain) => chain.id == targetChainId);
+    if (!targetChain) {
+      console.error(`Chain with ID ${targetChainId} not found`);
+      return;
+    }
+
+    const chainId = targetChain.id;
 
     // Helper function to attempt chain switch
     const attemptSwitchChain = async () => {
       try {
-        await switchChain({ chainId: `0x${chainId.toString(16)}` });
+        await wallet.switchChain(chainId); // Switch chain using wallet
         setIsCorrectChain(true);
       } catch (error) {
         console.warn("Switching chain failed, attempting to add chain:", error);
@@ -224,9 +315,10 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
     // Helper function to attempt adding chain
     const attemptAddChain = async () => {
       try {
-        await addChain(chain);
+        await walletClient.addChain({
+          chain: targetChain,
+        });
         setIsCorrectChain(true);
-        await switchChain({ chainId: `0x${chainId.toString(16)}` });
       } catch (error) {
         console.error("Adding chain also failed:", error);
       }
@@ -237,7 +329,22 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
   };
 
   const transferTipWhenNoPreference = async () => {
-    if (!provider) return;
+    if (!authenticated) return;
+
+    const wallet = wallets[0]; // Replace this with your desired wallet
+    const currentChainId = wallet.chainId;
+
+    const provider = await wallet.getEthereumProvider();
+    // console.log(provider, currentChainId);
+    const walletClient = createWalletClient({
+      chain: viemActions.getViewChain(wallet.chainId.split(":")[1]),
+      transport: custom(provider),
+    });
+
+    const targetChainId = parseInt(chain.chainId, 16); // Convert chainId to decimal
+
+    // Find the target chain from chainsList
+    const targetChain = chainsList.find((chain) => chain.id === targetChainId);
 
     try {
       if (selectedToken.address == NATIVE_TOKEN_ADDRESS) {
@@ -245,6 +352,7 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
           provider: provider,
           receiver: receiverAddress,
           amount: tipAmount,
+          chainId: wallet.chainId.split(":")[1],
         });
       } else {
         const txHash = await viemActions.sendErc20Token({
@@ -253,6 +361,7 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
           amount: tipAmount,
           tokenAddress: selectedToken.address,
           decimals: selectedToken.decimals,
+          chainId: wallet.chainId.split(":")[1],
         });
         return txHash
       }
@@ -263,19 +372,24 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
 
   const transferTipOnSameChain = async () => {
     // Using CowSwap
-    if (!provider) return;
+    if (!authenticated) return;
+
+    const wallet = wallets[0]; // Replace this with your desired wallet
+    const currentChainId = wallet.chainId;
+
+    const provider = await wallet.getEthereumProvider();
+    const walletClient = createWalletClient({
+      chain: viemActions.getViewChain(wallet.chainId.split(":")[1]),
+      transport: custom(provider),
+    });
 
     const publicClient = createPublicClient({
-      chain: viemActions.getViewChain(provider),
+      chain: viemActions.getViewChain(wallet.chainId.split(":")[1]),
       transport: custom(provider),
     });
 
     const connectedChainId = await viemActions.getChainId(provider);
 
-    const walletClient = createWalletClient({
-      chain: viemActions.getViewChain(provider),
-      transport: custom(provider),
-    });
     const address = await walletClient.getAddresses();
 
     const ethersProvider = new ethers.providers.Web3Provider(provider);
@@ -403,6 +517,7 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
     }
   };
 
+  // console.log("CHAIN: ", chain);
   const transferTipCrossChain = async () => {
     if (!provider) return;
 
@@ -426,10 +541,13 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
     const sdk = new SDK({
       url: "https://api.1inch.dev/fusion",
       authKey: import.meta.env.VITE_APP_FUSION_API_KEY,
-      blockchainProvider: walletClient
+      blockchainProvider: walletClient,
     });
 
-    const pref = {chainId: 1, address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"};
+    const pref = {
+      chainId: 1,
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    };
 
     const params = {
       srcChainId: connectedChainId,
@@ -439,48 +557,53 @@ function solidityPackedKeccak256(types: string[], values: any[]): string {
       dstTokenAddress: pref.address,
       amount: amountToSend.toString(),
       enableEstimate: true,
-      walletAddress: address[0]
+      walletAddress: address[0],
     };
 
     const quote = await sdk.getQuote(params);
 
-const secretsCount = quote.getPreset().secretsCount;
+    const secretsCount = quote.getPreset().secretsCount;
 
-const secrets = Array.from({ length: secretsCount }).map(() => getRandomBytes32());
-const secretHashes = secrets.map((x) => HashLock.hashSecret(x));
-
-
-const hashLock =
-secretsCount === 1
-  ? HashLock.forSingleFill(secrets[0])
-  : HashLock.forMultipleFills(
-      secretHashes.map((secretHash, i) =>
-        solidityPackedKeccak256(["uint64", "bytes32"], [i, secretHash.toString()])
-      ) as (string & {
-        _tag: "MerkleLeaf";
-      })[]
+    const secrets = Array.from({ length: secretsCount }).map(() =>
+      getRandomBytes32()
     );
+    const secretHashes = secrets.map((x) => HashLock.hashSecret(x));
 
-const order = await sdk
-.placeOrder(quote, {
-  walletAddress: address[0],
-  hashLock,
-  secretHashes,
-  // fee is an optional field
-  fee: {
-    takingFeeBps: 100, // 1% as we use bps format, 1% is equal to 100bps
-    takingFeeReceiver: "0x0000000000000000000000000000000000000000" //  fee receiver address
-  }
-})
+    const hashLock =
+      secretsCount === 1
+        ? HashLock.forSingleFill(secrets[0])
+        : HashLock.forMultipleFills(
+            secretHashes.map((secretHash, i) =>
+              solidityPackedKeccak256(
+                ["uint64", "bytes32"],
+                [i, secretHash.toString()]
+              )
+            ) as (string & {
+              _tag: "MerkleLeaf";
+            })[]
+          );
 
-return order.orderHash
-  }
+    sdk.placeOrder(quote, {
+      walletAddress: address[0],
+      hashLock,
+      secretHashes,
+      // fee is an optional field
+      fee: {
+        takingFeeBps: 100, // 1% as we use bps format, 1% is equal to 100bps
+        takingFeeReceiver: "0x0000000000000000000000000000000000000000", //  fee receiver address
+      },
+    });
+  };
 
   const handleSendTip = async () => {
-    if (!provider) return;
+    if (!authenticated) return;
 
+    const wallet = wallets[0]; // Replace this with your desired wallet
+    const currentChainId = wallet.chainId;
+
+    const provider = await wallet.getEthereumProvider();
     const walletClient = createWalletClient({
-      chain: viemActions.getViewChain(provider),
+      chain: viemActions.getViewChain(wallet.chainId.split(":")[1]),
       transport: custom(provider),
     });
 
@@ -497,9 +620,9 @@ return order.orderHash
         selectedToken.address.toLowerCase() ===
           recipientPreference.address.toLowerCase())
     ) {
-      txHash = await transferTipCrossChain();
+      // await transferTipCrossChain();
       console.log("Direct transfer to recipient");
-      // await transferTipWhenNoPreference();
+      await transferTipWhenNoPreference();
     } else if (
       connectedChainId === recipientPreference.chainId &&
       selectedToken.address != recipientPreference.address
@@ -606,20 +729,25 @@ return order.orderHash
               </label>
               <select
                 className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 rounded-lg focus:outline-none"
-                value={
-                  Object.keys(chainConfig).find(
-                    (key) => chainConfig[key] === chain
-                  ) || ""
-                }
-                onChange={handleChainChange}
+                value={chain?.id || ""}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  const selectedChain = chainsList.find(
+                    (c) => c.id == selectedId
+                  );
+                  if (selectedChain) {
+                    setChain(selectedChain); // Update the selected chain
+                  }
+                }}
               >
-                {Object.entries(chainConfig).map(([chainKey, chainData]) => (
-                  <option key={chainKey} value={chainKey}>
-                    {chainData.displayName}
+                {chainsList.map((chain) => (
+                  <option key={chain.id} value={chain.id}>
+                    {chain.name}
                   </option>
                 ))}
               </select>
             </div>
+
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Token
@@ -663,13 +791,13 @@ return order.orderHash
               </p>
             ) : null}
 
-            {isConnected ? (
+            {ready && authenticated ? (
               !isCorrectChain ? (
                 <button
                   className="mt-8 w-full px-6 py-3 bg-indigo-500 text-white rounded-lg shadow transition hover:bg-indigo-400"
-                  onClick={switchChainNetwork}
+                  onClick={() => switchChainNetwork(chain.id)}
                 >
-                  Switch to {chain.displayName}
+                  Switch to {chain.name}
                 </button>
               ) : (
                 <button
@@ -687,7 +815,7 @@ return order.orderHash
             ) : (
               <button
                 className="mt-8 w-full px-6 py-3 bg-indigo-500 text-white rounded-lg shadow transition hover:bg-indigo-400"
-                onClick={() => connect()}
+                onClick={login}
               >
                 Connect Wallet
               </button>
@@ -702,7 +830,8 @@ return order.orderHash
           </p>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
             We're constantly adding support for more platforms, so stay tuned
-            for updates! Please select a supported app such as X or GitHub or ENS.
+            for updates! Please select a supported app such as X or GitHub or
+            ENS.
           </p>
           <a
             href="/"
