@@ -5,9 +5,9 @@ interface UserAddressProps {
 
 const UserAddress: React.FC<UserAddressProps> = ({ address }) => {
   return (
-    <div className="my-4 p-4 border rounded-md bg-gray-100">
+    <div className="my-4 p-4 border rounded-md">
       <h3 className="text-lg font-semibold">Your Address:</h3>
-      <p className="text-sm text-gray-700">{address}</p>
+      <p className="text-sm">{address}</p>
     </div>
   )
 }

@@ -115,6 +115,11 @@ const sendNativeToken = async ({provider, receiver, amount}: {provider: IProvide
 
 const sendErc20Token = async ({provider, receiver, tokenAddress, amount, decimals}: {provider: IProvider, receiver: string, tokenAddress: string, amount: string, decimals: number}): Promise<any> => {
   try {
+    // const publicClient = createPublicClient({
+    //   chain: getViewChain(provider),
+    //   transport: custom(provider),
+    // })
+
     const walletClient = createWalletClient({
       chain: getViewChain(provider),
       transport: custom(provider),
@@ -130,6 +135,20 @@ const sendErc20Token = async ({provider, receiver, tokenAddress, amount, decimal
       args: [receiver, amountToSend],
       account: address[0]
     })
+
+    // Submit transaction to the blockchain
+    // const hash = await walletClient.sendTransaction({
+    //   account: address[0],
+    //   to: receiver as `0xstring`,
+    //   value: amountToSend,
+    // })
+    // console.log(hash)
+    // const receipt = await publicClient.waitForTransactionReceipt({ hash })
+
+    // return JSON.stringify(
+    //   receipt,
+    //   (_key, value) => (typeof value === 'bigint' ? value.toString() : value) // return everything else unchanged
+    // )
   } catch (error) {
     console.log(error);
     return error

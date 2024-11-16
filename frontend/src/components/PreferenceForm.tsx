@@ -22,12 +22,12 @@ const PreferenceForm: React.FC<PreferenceFormProps> = ({ onSave }) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto mt-8">
-      <h2 className="text-xl font-bold text-gray-800 mb-4">Set Preferences</h2>
+    <div className="p-6 rounded-lg shadow-md max-w-md mx-auto mt-8">
+      <h2 className="text-xl font-bold mt-4 mb-4">Set / Change Preferences</h2>
       <form onSubmit={handleSubmit}>
-        <label className="block text-gray-600 mb-2">Choose EVM Chain</label>
+        <label className="block mb-2">Choose EVM Chain</label>
         <select
-          className="w-full px-3 py-2 mb-4 border rounded-lg text-gray-700 focus:outline-none"
+          className="w-full px-3 py-2 mb-4 border rounded-lg focus:outline-none text-gray-700"
           value={selectedChain}
           onChange={(e) => setSelectedChain(e.target.value)}
         >
@@ -41,7 +41,7 @@ const PreferenceForm: React.FC<PreferenceFormProps> = ({ onSave }) => {
           ))}
         </select>
 
-        <label className="block text-gray-600 mb-2">Choose Token</label>
+        <label className="block mb-2">Choose Token</label>
         <input
           type="text"
           className="w-full px-3 py-2 mb-4 border rounded-lg text-gray-700 focus:outline-none"
